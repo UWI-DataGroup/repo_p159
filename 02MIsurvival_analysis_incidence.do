@@ -3,7 +3,7 @@
     //  algorithm name					MIsurvival.do
     //  project:				            BNR
     //  analysts:				       	Christina Howitt
-    //  algorithm task			            MI survival analysis using 10 years of BNR data
+    //  algorithm task			            MI Incidence using 10 years of BNR data
 
 
     ** General algorithm set-up
@@ -23,7 +23,7 @@
 
     ** Close any open log file and open a new log file
     capture log close
-    log using "`logpath'\MIsurvival", replace
+    log using "`logpath'\MIsurvival_inc", replace
 
 
 ** Load clean dataset
