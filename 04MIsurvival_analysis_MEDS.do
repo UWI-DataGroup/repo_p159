@@ -29,9 +29,23 @@
 ** Load clean dataset
 use "`datapath'\version02\1-input\heart_2009-2019_v8_anonymisedFUdata_Stata_v16_clean(16-Jul-2021)", clear
 
-drop if year==2009
 
-** Limit to alive at discharge and abstracted only
+**-------------------------------------------------
+** PREPARE DATA FOR ANALYSIS
+**-------------------------------------------------
+
+** Create variable for year of MI
+drop year // this is an existing variable in the datset but there are a couple of differences between it and the derived version below, which we will consider more accurate
+gen year = year(dom)
+label variable year "year of MI event"
+order year, after(dom)
+
+** we are only using full years, so 2009 to be dropped
+drop if year == 2009
+sort dom 
+codebook dom
+
+/** Limit to alive at discharge and abstracted only
 keep if vstatus==1 & abstracted==1
 
 **********************************************************************************************

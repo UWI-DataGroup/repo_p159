@@ -37,6 +37,10 @@ drop _merge
 **-------------------------------------------------------------
 ** SURVIVAL ANALYSIS
 **-------------------------------------------------------------
+gen time1 = time + 1
+drop time
+rename time1 time
+
 ** Declare data to be survival-time data
 stset time, failure(died) id (anon_pid)
 
@@ -51,8 +55,8 @@ sts graph
 			plotregion(c(gs16) ic(gs16) ilw(thin) lw(thin)) 
 			graphregion(color(gs16) ic(gs16) ilw(thin) lw(thin)) 
 
-				ylab(0.6(0.1)1, labs(small) nogrid angle(0)) 
-				ytick (0.6(0.05)1) 
+				ylab(0.5(0.1)1, labs(small) nogrid angle(0)) 
+				ytick (0.5(0.05)1) 
 				ytitle("Proportion surviving") 
 
 				xtitle (Time from Acute MI (days))
@@ -72,4 +76,7 @@ stci, by(sex)
 
 stcox i.sex
 stcox i.sex age
+
+stcox i.score_sec
+stcox score_sec
 stcox i.sex age i.score_sec

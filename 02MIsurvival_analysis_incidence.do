@@ -29,7 +29,6 @@
 ** Load clean dataset
 use "`datapath'\version02\1-input\heart_2009-2019_v8_anonymisedFUdata_Stata_v16_clean(16-Jul-2021)", clear
 
-
 **-------------------------------------------------
 ** PREPARE DATA FOR ANALYSIS
 **-------------------------------------------------
@@ -55,30 +54,8 @@ drop if year == 2009
 sort dom 
 codebook dom
 
-** Create a variable for survival time
-gen time = .
-replace time = deathdate - dom 
-replace time = fu2doa - dom if deathdate==.
-label variable time "survival time (days)"
-** data checks
-list anon_pid if f2vstatus==2 & deathdate==. // there are 42 people with missing death dates but vital status is dead. Ashley to provide death dates
-      replace time = .z if f2vstatus==2 & deathdate==.
 
-count if dom !=. & deathdate==. & f1vstatus==. & f2vstatus==. & fu1doa==. & fu2doa==. // 124 people in this category
-      replace time = .z if dom !=. & deathdate==. & f1vstatus==. & f2vstatus==. & fu1doa==. & fu2doa==.
-
-codebook time
-sort time   
-
-**Create survival status and censor at 365 days
-gen case = 1
-gen died = 0
-replace died = 1 if deathdate != .
-label variable died "Survival status (1=dead)"
-replace time=365 if time>365
-
-
-**-------------------------------------------------------------
+/**-------------------------------------------------------------
 ** PART ONE: CRUDE AND STANDARDIZED INCIDENCE 
 **-------------------------------------------------------------
 ** Age group preparation - 10 year bands
@@ -143,6 +120,12 @@ preserve
                         list age10 case bb_pop inc se lower upper , noobs table
 
 restore
+            
+** ANALYSIS NOTES: for directly standardised rates (incidence and mortality), the distrate command will be used. It requires
+** a row for every age group, so after collapsing the dataset, sort by age group and then determine 
+** whether any groups are missing. If so, fill in the blanks.            
+            
+            
             ***********************************************************************
              ** Standardized incidence by year (using WHO 2000 - 2025 population)
                   **2010
@@ -160,6 +143,7 @@ restore
 
                         sort age10 
                         list 
+                        
                         distrate case bb_pop using "`datapath'\version02\1-input\who2000_10-1", stand(age10) popstand(pop) mult(100000) format(%8.2f)
 
                      /*    +-------------------------------------------------------------+
@@ -1189,7 +1173,7 @@ preserve
 */
 
 restore
-*/
+
 *The results from the above analyses were copied and pasted into Excel and saved in X:\The University of the West Indies\DataGroup - repo_data\data_p159\version02\2-working\MIincidence.xlsx
 *This file will be used to produce graphics
 

@@ -123,7 +123,7 @@ replace died2=1 if f2vstatus==2
 gen died_diff=0
 replace died_diff=1 if died!=died2
 tab died_diff  // 32 cases are recorded as dead but are missing death date
-     replace time = .z if died_diff==1
+
 
 
 **-------------------------------------------------------------
@@ -167,6 +167,11 @@ save "`datapath'\version02\2-working\heart2010-2019_mort", replace
 **-------------------------------------------------------------
 ** PART TWO: CRUDE AND STANDARDISED MORTALITY 
 **-------------------------------------------------------------
+
+** ANALYSIS NOTES: for directly standardised rates (incidence and mortality), the distrate command will be used. It requires
+** a row for every age group, so after collapsing the dataset, sort by age group and then determine 
+** whether any groups are missing. If so, fill in the blanks.
+
 ** Prepare data for SEX-STRATIFIED mortality calculations - must be aggregated by the same 10-year age groups as in the standardized population dataset
 * We use the Barbados population in 2015 according to WPP to calculate mortality
 merge m:1 age10 sex using "`datapath'\version02\1-input\bb2015_sex"
